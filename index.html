@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MotifPass — One design, packed for Etsy and Creative Fabrica</title>
+  <meta name="description" content="MotifPass creates real export packs for Etsy and Creative Fabrica, and guided checklists for Adobe Stock, Spoonflower and Canva. See what each sale really nets, and keep a rights record you maintain yourself.">
+  <style>
+    :root {
+      --cream: #F4F0E6;
+      --paper: #FFFCF6;
+      --ink: #1C2B24;
+      --ink-soft: #4A5850;
+      --muted: #6E7A72;
+      --line: #DDD6C6;
+      --sage: #5C7A62;
+      --sage-dark: #2C4538;
+      --sage-mid: #3E5C49;
+      --sage-soft: #E4EDE4;
+      --forest: #1D2F27;
+      --warn-bg: #F8E8DC;
+      --warn: #8C3F2C;
+      --warn-line: #E2C0AB;
+      --ok: #2F6A45;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--cream);
+      color: var(--ink);
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-size: 17px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+    img { max-width: 100%; height: auto; display: block; }
+    a { color: var(--sage-dark); }
+    .banner {
+      background: var(--warn-bg);
+      color: #5A3328;
+      border-bottom: 1px solid var(--warn-line);
+      text-align: center;
+      font-size: 13.5px;
+      font-weight: 550;
+      padding: 10px 20px;
+    }
+    header {
+      background: var(--paper);
+      border-bottom: 1px solid var(--line);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .header-inner, .wrap {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    .header-inner {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      height: 64px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--sage-dark);
+    }
+    .wordmark {
+      font-family: Georgia, "Palatino Linotype", Palatino, "Times New Roman", serif;
+      font-weight: 600;
+      font-size: 26px;
+      letter-spacing: 0.01em;
+      line-height: 1;
+    }
+    nav { margin-left: auto; display: flex; gap: 22px; }
+    nav a {
+      text-decoration: none;
+      color: var(--ink-soft);
+      font-size: 14.5px;
+      font-weight: 550;
+    }
+    nav a:hover { color: var(--sage-dark); }
+    .hero {
+      padding: 64px 0 0;
+      background:
+        radial-gradient(ellipse 800px 420px at 50% 0%, #E6EFE6 0%, transparent 70%),
+        var(--cream);
+    }
+    .hero-inner { max-width: 1120px; margin: 0 auto; padding: 0 24px; text-align: center; }
+    .kicker {
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--sage-mid);
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    h1 {
+      font-family: Georgia, "Palatino Linotype", Palatino, "Times New Roman", serif;
+      font-weight: 600;
+      font-size: clamp(34px, 5vw, 54px);
+      line-height: 1.12;
+      letter-spacing: -0.02em;
+      color: var(--sage-dark);
+      max-width: 18ch;
+      margin: 0 auto;
+    }
+    .lede {
+      margin: 18px auto 0;
+      max-width: 640px;
+      color: var(--ink-soft);
+      font-size: 18.5px;
+    }
+    .hero-cta { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin: 28px 0 48px; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 46px;
+      padding: 0 20px;
+      border-radius: 10px;
+      font-weight: 650;
+      font-size: 15px;
+      text-decoration: none;
+      border: 1px solid transparent;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .btn.primary { background: var(--sage-dark); color: #F4F0E6; }
+    .btn.ghost { background: var(--paper); color: var(--sage-dark); border-color: var(--line); }
+    .btn.coming {
+      background: var(--sage-soft);
+      color: var(--sage-dark);
+      border-color: #C9D6C8;
+      cursor: default;
+    }
+    .btn.light { background: #F4F0E6; color: var(--sage-dark); }
+    .shot-wrap {
+      max-width: 960px;
+      margin: 0 auto;
+      border: 1px solid var(--line);
+      border-bottom: none;
+      border-radius: 16px 16px 0 0;
+      overflow: hidden;
+      box-shadow: 0 20px 50px rgba(28,43,36,0.12);
+      background: var(--paper);
+    }
+    .shot-wrap img { width: 100%; }
+    section { padding: 80px 0; }
+    section.alt { background: var(--paper); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .section-head { max-width: 680px; margin: 0 auto 40px; text-align: center; }
+    h2 {
+      font-family: Georgia, "Palatino Linotype", Palatino, "Times New Roman", serif;
+      font-weight: 600;
+      font-size: clamp(28px, 3.4vw, 38px);
+      letter-spacing: -0.02em;
+      color: var(--sage-dark);
+      line-height: 1.2;
+    }
+    .section-head p { margin-top: 12px; color: var(--ink-soft); }
+    .grid-2, .grid-3 { display: grid; gap: 20px; }
+    .grid-2 { grid-template-columns: 1fr 1fr; }
+    .grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+    .card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 24px;
+    }
+    section.alt .card { background: var(--cream); }
+    .card h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 8px;
+    }
+    .card p, .card li { color: var(--ink-soft); font-size: 15.5px; }
+    .pill {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 999px;
+      margin-bottom: 10px;
+    }
+    .pill.ready { background: #E3F0E6; color: var(--ok); }
+    .pill.guide { background: #F5E9D2; color: #8A5A1E; }
+    .calc-list { list-style: none; display: grid; gap: 14px; max-width: 800px; margin: 0 auto; }
+    .calc-list li {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 18px 20px;
+    }
+    .calc-list strong { display: block; color: var(--ink); margin-bottom: 4px; }
+    .advice {
+      max-width: 800px;
+      margin: 16px auto 0;
+      background: var(--warn-bg);
+      border: 1px solid var(--warn-line);
+      color: #5A3328;
+      border-radius: 12px;
+      padding: 14px 18px;
+      font-size: 15px;
+      text-align: center;
+    }
+    .plans { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; align-items: stretch; }
+    .plan {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 28px 26px 24px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    .plan.featured {
+      background: var(--sage-dark);
+      border-color: var(--sage-dark);
+      color: #F4F0E6;
+      box-shadow: 0 18px 40px rgba(28,43,36,0.16);
+      transform: translateY(-6px);
+    }
+    .plan-name {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--sage-mid);
+      margin-bottom: 8px;
+    }
+    .plan.featured .plan-name { color: #C9D6C8; }
+    .price {
+      font-family: Georgia, "Palatino Linotype", Palatino, "Times New Roman", serif;
+      font-size: 56px;
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      line-height: 0.95;
+      color: var(--sage-dark);
+    }
+    .plan.featured .price { color: #F4F0E6; }
+    .price span { font-family: system-ui, sans-serif; font-size: 16px; font-weight: 550; color: var(--muted); margin-left: 4px; }
+    .plan.featured .price span { color: #C9D6C8; }
+    .annual { color: var(--ink-soft); font-size: 14.5px; margin: 8px 0 20px; }
+    .plan.featured .annual { color: #D5DFD8; }
+    .plan ul { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+    .plan li { font-size: 15px; color: var(--ink); padding-left: 22px; position: relative; }
+    .plan li::before { content: "✓"; position: absolute; left: 0; color: var(--sage-dark); font-weight: 700; }
+    .plan.featured li { color: #F4F0E6; }
+    .plan.featured li::before { color: #C9D6C8; }
+    .plan .btn { width: 100%; margin-top: auto; }
+    .popular {
+      position: absolute;
+      top: -11px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #E8C9A8;
+      color: #5A3328;
+      font-size: 11px;
+      font-weight: 750;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+    footer {
+      padding: 32px 24px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+      border-top: 1px solid var(--line);
+    }
+    @media (max-width: 900px) {
+      .grid-2, .grid-3, .plans { grid-template-columns: 1fr; }
+      .plan.featured { transform: none; }
+      section { padding: 56px 0; }
+      .hero { padding-top: 40px; }
+    }
+    @media (max-width: 600px) {
+      nav { display: none; }
+      h1 { max-width: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="banner">Early preview – checkout is in Stripe test mode; no real charges.</div>
+  <header>
+    <div class="header-inner">
+      <a class="brand" href="#">
+        <svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true">
+          <rect x="1.5" y="1.5" width="29" height="29" rx="8" fill="#2C4538"/>
+          <rect x="7" y="6" width="18" height="20" rx="2.2" fill="none" stroke="#F4F0E6" stroke-width="1.4"/>
+          <path d="M16 11.2c1.8 1.2 3.6 1.1 4.6-.2-1.2 3.4-1.1 5.8 0 8-1.8-1-3.2-1-4.6 0 1.1-2.2 1.2-4.6 0-8-1 1.3.1 1.4 0 .2z" fill="none" stroke="#C9D6C8" stroke-width="1.2" stroke-linejoin="round"/>
+          <circle cx="16" cy="16.4" r="1.15" fill="#E8C9A8"/>
+        </svg>
+        <span class="wordmark">MotifPass</span>
+      </a>
+      <nav>
+        <a href="#packs">Packs</a>
+        <a href="#calculator">Calculator</a>
+        <a href="#passport">Rights log</a>
+        <a href="#pricing">Pricing</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="kicker">For designers who sell one file in many places</div>
+      <h1>One design, packed for Etsy and Creative Fabrica</h1>
+      <p class="lede">Make a design once. MotifPass creates real export packs for Etsy and Creative Fabrica, and a guided checklist for Adobe Stock, Spoonflower and Canva. It shows what each sale really nets on that site’s own terms, and keeps a rights record you maintain yourself.</p>
+      <div class="hero-cta">
+        <a class="btn primary" href="#pricing">See plans</a>
+        <a class="btn ghost" href="#packs">How it works</a>
+      </div>
+      <div class="shot-wrap">
+        <img src="dashboard-hero.jpg" width="1400" height="910" alt="MotifPass dashboard preview for a Peony Line Art Pack, with a manual rights log, Etsy and Creative Fabrica export packs, and guided checklists for other marketplaces.">
+      </div>
+    </div>
+  </div>
+
+  <section id="packs">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Real packs for two shops. Guided checklists for the rest.</h2>
+        <p>A master file can be packed as a ZIP for Etsy and Creative Fabrica. Adobe Stock, Spoonflower and Canva need a different kind of file, so they get a step-by-step checklist — not an auto-generated pack.</p>
+      </div>
+      <div class="grid-2" style="margin-bottom:20px">
+        <article class="card">
+          <span class="pill ready">Export pack</span>
+          <h3>Etsy</h3>
+          <p>A digital-download bundle — PDF, PNG and SVG — checked against Etsy’s file limits (up to 5 files, 20 MB each) and filename rules. Titles and tags are still yours to write.</p>
+        </article>
+        <article class="card">
+          <span class="pill ready">Export pack</span>
+          <h3>Creative Fabrica</h3>
+          <p>The closest cousin of the Etsy pack: craft-ready SVG, PNG and PDF, plus a preview and a licence sheet. Whether a listing is a single sale or in the subscription library is a choice you record, not something the pack invents.</p>
+        </article>
+      </div>
+      <div class="grid-3">
+        <article class="card">
+          <span class="pill guide">Guided checklist</span>
+          <h3>Adobe Stock</h3>
+          <p>Split the work into individual vectors, add titles and keywords, and confirm Adobe’s current illustration specs and generative-AI rules. A customer ZIP is not a stock submission.</p>
+        </article>
+        <article class="card">
+          <span class="pill guide">Guided checklist</span>
+          <h3>Spoonflower</h3>
+          <p>Create and proof a seamless, high-resolution repeat. A motif pack is not a tiled fabric design, and MotifPass will not invent one from your master file.</p>
+        </article>
+        <article class="card">
+          <span class="pill guide">Guided checklist</span>
+          <h3>Canva</h3>
+          <p>Build a template in the Canva editor. A downloadable SVG or PDF is a different product, and MotifPass cannot turn one into a Canva template for you.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="calculator" class="alt">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>A net calculator with a separate input for each site</h2>
+        <p>There is no shared $10 model. Each marketplace has its own input, and every rate has a source link and a last-verified date.</p>
+      </div>
+      <ul class="calc-list">
+        <li><strong>Etsy and Creative Fabrica — a sale price.</strong> On Etsy, add an Offsite Ads toggle. On Creative Fabrica, choose a single sale or a subscription (subscription downloads pay from a pool, and that amount is unknown).</li>
+        <li><strong>Adobe Stock — the buyer’s plan or licence type.</strong> You do not set a price. Official pay is per download by plan, not a percentage of a price you type.</li>
+        <li><strong>Spoonflower — the product and the fabric price the customer pays.</strong> The royalty is a share of that printed-item price, not a digital download.</li>
+        <li><strong>Canva — the royalty pool, shown as unknown per export.</strong> Dollars per export are unpublished. $10 here is the monthly payout threshold, not a price.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="passport">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>A Design Passport you keep yourself</h2>
+        <p>You keep one record per design — owner, AI use, licence, exclusivity, and where it is listed. MotifPass does not scan live shops, and the log is record-keeping, not legal or tax advice.</p>
+      </div>
+      <div class="grid-2">
+        <article class="card">
+          <h3>Manual rights log</h3>
+          <p>If you have marked a design as selling at full price on Etsy and also listed in Creative Fabrica’s subscription library, MotifPass warns you and suggests keeping distinct catalogues. The warning only knows what you entered. Payout and forfeiture reminders use sourced rules, with balances you enter by hand.</p>
+        </article>
+        <article class="card">
+          <h3>Account-level AI settings</h3>
+          <p>Shop- or account-wide duties live in their own section, apart from each design’s checklist: Canva’s AI-training opt-out, Adobe’s generative-AI rules, and Etsy’s rule to disclose AI in a listing when it was used. The per-design checklist then applies those rules to one file.</p>
+        </article>
+      </div>
+      <p class="advice">Not legal or tax advice. The Design Passport is a record you maintain. It is not a scan of your live shops, and it is not legal, tax, or earnings advice.</p>
+    </div>
+  </section>
+
+  <section id="pricing" class="alt">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Simple pricing, still a hypothesis</h2>
+        <p>Three plans. Checkout for the paid plans is a Stripe test link, so nothing is charged for real.</p>
+      </div>
+      <div class="plans">
+        <article class="plan">
+          <div class="plan-name">Free</div>
+          <div class="price">$0<span>/month</span></div>
+          <div class="annual">Up to 25 designs</div>
+          <ul>
+            <li>Per-site net calculator with source-linked rates</li>
+            <li>2 marketplaces at a time</li>
+            <li>View-only manual Design Passport</li>
+            <li>View account-level AI settings</li>
+          </ul>
+          <span class="btn coming">Start free – coming soon</span>
+        </article>
+        <article class="plan">
+          <div class="plan-name">Solo</div>
+          <div class="price">$9<span>/month</span></div>
+          <div class="annual">Export packs and checklists for one designer</div>
+          <ul>
+            <li>Export packs for Etsy and Creative Fabrica</li>
+            <li>Guided checklists for Adobe Stock, Spoonflower and Canva</li>
+            <li>Full manual Design Passport and conflict warnings</li>
+            <li>Per-design AI checklist and account-level AI settings</li>
+            <li>Payout and forfeiture reminders</li>
+          </ul>
+          <a class="btn primary" href="https://buy.stripe.com/test_eVqfZggUIg733sR56q5Ne00" target="_blank" rel="noopener noreferrer">Start Solo (test checkout)</a>
+        </article>
+        <article class="plan featured">
+          <div class="popular">Multi-shop</div>
+          <div class="plan-name">Multi-shop</div>
+          <div class="price">$19<span>/month</span></div>
+          <div class="annual">For studios selling across several shops</div>
+          <ul>
+            <li>Everything in Solo</li>
+            <li>Unlimited designs</li>
+            <li>3 team seats</li>
+            <li>CSV import and export</li>
+            <li>Direct publish to Etsy and Adobe Stock, when Phase 2 ships</li>
+          </ul>
+          <a class="btn light" href="https://buy.stripe.com/test_aFafZgbAoaMJgfDfL45Ne01" target="_blank" rel="noopener noreferrer">Start Multi-shop (test checkout)</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div>© 2026 MotifPass</div>
+  </footer>
+</body>
+</html>
