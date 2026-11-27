@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MotifPass app</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="banner"><strong>Stripe test mode.</strong> Nothing here charges a real card.</div>
+  <header class="header">
+    <div class="header-inner">
+      <a class="brand" href="../">
+        <svg width="28" height="28" viewBox="0 0 32 32" aria-hidden="true">
+          <rect x="1.5" y="1.5" width="29" height="29" rx="8" fill="#F4F0E6"/>
+          <rect x="7" y="6" width="18" height="20" rx="2.2" fill="none" stroke="#2C4538" stroke-width="1.4"/>
+          <path d="M16 11.2c1.8 1.2 3.6 1.1 4.6-.2-1.2 3.4-1.1 5.8 0 8-1.8-1-3.2-1-4.6 0 1.1-2.2 1.2-4.6 0-8-1 1.3.1 1.4 0 .2z" fill="none" stroke="#2C4538" stroke-width="1.2" stroke-linejoin="round"/>
+          <circle cx="16" cy="16.4" r="1.15" fill="#C4A574"/>
+        </svg>
+        <span>MotifPass</span>
+      </a>
+      <div class="signed" id="signed-in" hidden>
+        <span id="signed-label"></span>
+        <button type="button" class="btn ghost" id="sign-out">Sign out</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section id="gate" class="gate hidden">
+      <h1>No purchase found</h1>
+      <p>This browser has no MotifPass entitlement yet. Start a Stripe test checkout from the landing page, then you’ll be sent back here.</p>
+      <div class="plan-links">
+        <a class="btn primary" href="../#pricing">Free</a>
+        <a class="btn ink" href="../#pricing">Solo</a>
+        <a class="btn ink" href="../#pricing">Multi-shop</a>
+      </div>
+      <p class="fine">Or open the <a href="../">landing page</a>.</p>
+    </section>
+
+    <div id="email-prompt" class="card hidden">
+      <h2>Confirm the email you used at checkout</h2>
+      <p>MotifPass is a static site on GitHub Pages, so it cannot read your email from Stripe without a backend. Enter the address you used at checkout and it will be stored only in this browser.</p>
+      <form id="email-form">
+        <label for="checkout-email">Email used at checkout</label>
+        <input id="checkout-email" name="email" type="email" required autocomplete="email" placeholder="you@example.com">
+        <div class="actions-row">
+          <button type="submit" class="btn primary">Save and open the dashboard</button>
+        </div>
+        <p class="fine">This is not a verified Stripe receipt. Anyone with this browser can record any address. Not legal or tax advice.</p>
+      </form>
+    </div>
+
+    <p id="activate-error" class="errors hidden"></p>
+
+    <section id="dashboard" class="hidden">
+      <h1>Free dashboard</h1>
+      <p class="lede">Export packs for Etsy and Creative Fabrica, guided checklists for Adobe Stock, Spoonflower and Canva, a net calculator for each site, and a rights log you keep yourself. All of this runs in your browser. Stripe test mode only.</p>
+
+      <div class="section-head">
+        <div>
+          <h2>Etsy export pack</h2>
+          <p>A digital-download bundle — PDF, PNG and SVG — checked against Etsy’s file limits (up to 5 files, 20 MB each) and filename rules. Titles and tags are still yours to write.</p>
+        </div>
+      </div>
+      <div class="card">
+        <form id="etsy-form">
+          <label for="etsy-files">Upload PNG, JPG, SVG or PDF files</label>
+          <div class="file-drop">
+            <input id="etsy-files" type="file" accept=".png,.jpg,.jpeg,.svg,.pdf,image/png,image/jpeg,image/svg+xml,application/pdf" multiple>
+          </div>
+          <ul class="file-list" id="etsy-file-list"></ul>
+          <div id="etsy-errors" class="errors hidden"></div>
+          <p id="etsy-notes" class="notes"></p>
+          <div class="actions-row">
+            <button type="submit" class="btn primary">Download Etsy pack (.zip)</button>
+          </div>
+          <p id="etsy-ok" class="okmsg hidden"></p>
+        </form>
+      </div>
+
+      <div class="section-head">
+        <div>
+          <h2>Creative Fabrica export pack</h2>
+          <p>The closest cousin of the Etsy pack: craft-ready SVG, PNG and PDF, plus a preview and a licence sheet.</p>
+        </div>
+      </div>
+      <div class="card">
+        <form id="cf-form">
+          <label for="cf-files">Upload PNG, JPG, SVG or PDF files</label>
+          <div class="file-drop">
+            <input id="cf-files" type="file" accept=".png,.jpg,.jpeg,.svg,.pdf,image/png,image/jpeg,image/svg+xml,application/pdf" multiple>
+          </div>
+          <ul class="file-list" id="cf-file-list"></ul>
+          <label for="cf-sale">How will this be listed?</label>
+          <select id="cf-sale">
+            <option value="single">Single sale</option>
+            <option value="subscription">Subscription library</option>
+          </select>
+          <div id="cf-errors" class="errors hidden"></div>
+          <p id="cf-notes" class="notes"></p>
+          <div class="actions-row">
+            <button type="submit" class="btn primary">Download Creative Fabrica pack (.zip)</button>
+          </div>
+          <p id="cf-ok" class="okmsg hidden"></p>
+        </form>
+      </div>
+
+      <div class="section-head">
+        <div>
+          <h2>Guided checklists</h2>
+          <p>Adobe Stock, Spoonflower and Canva stay as guided checklists. MotifPass does not invent a stock submission, a seamless repeat or a Canva template from your master file.</p>
+        </div>
+      </div>
+      <div class="grid two" id="checklists"></div>
+
+      <div class="section-head">
+        <div>
+          <h2>Net-earnings calculator</h2>
+          <p>A separate input for each site. Every rate has a source link and a last-verified date. Where an amount is unpublished, the result is “unknown” — never a guess. Not legal or tax advice.</p>
+        </div>
+      </div>
+      <div class="grid two">
+        <div class="card">
+          <h3>Etsy</h3>
+          <form id="calc-etsy">
+            <label for="etsy-price">Sale price (USD)</label>
+            <input id="etsy-price" type="number" min="0" step="0.01" value="10">
+            <label for="etsy-ads">Offsite Ads</label>
+            <select id="etsy-ads">
+              <option value="off">Off</option>
+              <option value="15">On — 15% (under $10k in the prior 365 days)</option>
+              <option value="12">On — 12% ($10k or more; mandatory)</option>
+            </select>
+            <div class="actions-row"><button type="submit" class="btn ink">Calculate</button></div>
+          </form>
+          <div id="etsy-result" class="result hidden"></div>
+        </div>
+        <div class="card">
+          <h3>Creative Fabrica</h3>
+          <form id="calc-cf">
+            <label for="cf-mode">Sale type</label>
+            <select id="cf-mode">
+              <option value="single">Single sale</option>
+              <option value="subscription">Subscription library</option>
+            </select>
+            <label for="cf-price">Single-sale price (USD)</label>
+            <input id="cf-price" type="number" min="0" step="0.01" value="10">
+            <div class="actions-row"><button type="submit" class="btn ink">Calculate</button></div>
+          </form>
+          <div id="cf-result" class="result hidden"></div>
+        </div>
+        <div class="card">
+          <h3>Adobe Stock</h3>
+          <form id="calc-adobe">
+            <label for="adobe-plan">Buyer plan or licence</label>
+            <select id="adobe-plan">
+              <option value="3mo">3 credits/month (monthly)</option>
+              <option value="10mo">10 credits/month (monthly)</option>
+              <option value="10yr">10 credits/month (annual)</option>
+              <option value="25mo">25 credits/month (monthly)</option>
+              <option value="25yr">25 credits/month (annual)</option>
+              <option value="40mo">40 credits/month (monthly)</option>
+              <option value="40yr">40 credits/month (annual)</option>
+              <option value="350">350+ credits/month</option>
+              <option value="ext_od">Extended licence (on demand)</option>
+              <option value="ext_sub">Extended licence (subscription)</option>
+            </select>
+            <div class="actions-row"><button type="submit" class="btn ink">Calculate</button></div>
+          </form>
+          <div id="adobe-result" class="result hidden"></div>
+        </div>
+        <div class="card">
+          <h3>Spoonflower</h3>
+          <form id="calc-spoon">
+            <label for="spoon-paid">What the customer pays for the printed item (USD)</label>
+            <input id="spoon-paid" type="number" min="0" step="0.01" value="10">
+            <div class="actions-row"><button type="submit" class="btn ink">Calculate</button></div>
+          </form>
+          <div id="spoon-result" class="result hidden"></div>
+        </div>
+        <div class="card">
+          <h3>Canva</h3>
+          <form id="calc-canva">
+            <p>Canva pays from a royalty pool. You do not set a list price here. Per-export dollars are unpublished on Canva’s official pages.</p>
+            <div class="actions-row"><button type="submit" class="btn ink">Show official rate</button></div>
+          </form>
+          <div id="canva-result" class="result hidden"></div>
+        </div>
+      </div>
+
+      <div class="section-head">
+        <div>
+          <h2>Rights log — Design Passport</h2>
+          <p>You keep one record per design — owner, AI use, licence, exclusivity, and where it is listed. MotifPass does not scan live shops, and the log is record-keeping, not legal or tax advice.</p>
+        </div>
+        <button type="button" class="btn ink" id="passport-export">Export CSV</button>
+      </div>
+      <div class="card">
+        <form id="passport-form">
+          <input type="hidden" id="passport-id">
+          <div class="row cols-2">
+            <div>
+              <label for="p-name">Design name</label>
+              <input id="p-name" required>
+            </div>
+            <div>
+              <label for="p-owner">Owner</label>
+              <input id="p-owner">
+            </div>
+            <div>
+              <label for="p-ai">AI use</label>
+              <input id="p-ai" placeholder="None, or describe tools used">
+            </div>
+            <div>
+              <label for="p-licence">Licence</label>
+              <input id="p-licence" placeholder="Personal, commercial, extended…">
+            </div>
+            <div>
+              <label for="p-excl">Exclusivity</label>
+              <input id="p-excl" placeholder="Non-exclusive, exclusive to…">
+            </div>
+            <div>
+              <label for="p-listed">Where listed</label>
+              <input id="p-listed" placeholder="Etsy, Creative Fabrica, Adobe Stock…">
+            </div>
+          </div>
+          <div class="checks">
+            <label><input type="checkbox" id="p-etsy"> Sold at full price on Etsy</label>
+            <label><input type="checkbox" id="p-cf"> Listed in Creative Fabrica’s subscription library</label>
+          </div>
+          <div id="passport-conflict" class="warning hidden"></div>
+          <div class="actions-row">
+            <button type="submit" class="btn primary" id="passport-save">Add record</button>
+            <button type="button" class="btn" id="passport-cancel" hidden>Cancel edit</button>
+          </div>
+        </form>
+      </div>
+      <div id="passport-list"></div>
+
+      <div class="section-head">
+        <div>
+          <h2>Account-level AI settings</h2>
+          <p>Canva’s AI-training opt-out, Adobe’s generative-AI rules, and Etsy’s rule to disclose AI in a listing when it was used. These are reminders you keep, not automated checks.</p>
+        </div>
+      </div>
+      <div class="card" id="ai-settings">
+        <label for="ai-canva">Canva AI-training opt-out</label>
+        <select id="ai-canva">
+          <option value="undecided">Not decided yet</option>
+          <option value="opted-out">Opted out of AI training</option>
+          <option value="allowed">Allow training (or left the default)</option>
+        </select>
+        <div class="checks">
+          <label><input type="checkbox" id="ai-adobe"> I have re-read Adobe’s current generative-AI and training-data rules before submitting.</label>
+        </div>
+        <div class="checks">
+          <label><input type="checkbox" id="ai-etsy"> Remind me to disclose AI in an Etsy listing when AI was used.</label>
+        </div>
+        <p class="fine" id="ai-saved"></p>
+      </div>
+
+      <p class="disclaimer">MotifPass is a client-side preview in Stripe test mode. Entitlements are stored only in this browser and are not verified against Stripe. The calculator, packs and rights log are not legal, tax or earnings advice. Rate sources and last-verified dates are shown on each calculation.</p>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3/dist/jszip.min.js"></script>
+  <script src="app.js"></script>
+  <script>
+    (function () {
+      var MP = window.MotifPass;
+      var store = MP.wrapStorage(window.localStorage);
+
+      function $(id) { return document.getElementById(id); }
+      function show(el, on) { if (el) el.classList.toggle("hidden", !on); }
+      function setHtml(el, html) { if (el) el.innerHTML = html; }
+      function showErrors(id, errors) {
+        var el = $(id);
+        if (!errors || !errors.length) { show(el, false); return; }
+        el.innerHTML = "<strong>Fix these before the pack can be built:</strong><ul>" +
+          errors.map(function (e) { return "<li>" + escapeHtml(e) + "</li>"; }).join("") + "</ul>";
+        show(el, true);
+      }
+      function escapeHtml(s) {
+        return String(s).replace(/[&<>"']/g, function (c) {
+          return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c];
+        });
+      }
+      function fileList(input, listId) {
+        var ul = $(listId);
+        var files = input.files || [];
+        ul.innerHTML = "";
+        Array.prototype.forEach.call(files, function (f) {
+          var li = document.createElement("li");
+          li.textContent = f.name + " — " + (f.size / (1024 * 1024)).toFixed(2) + " MB";
+          ul.appendChild(li);
+        });
+      }
+      function sourceHtml(result) {
+        var links = (result.sources || []).map(function (s) {
+          return '<a href="' + escapeHtml(s.href) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(s.label) + "</a>";
+        }).join(" · ");
+        return '<div class="source">Last verified ' + escapeHtml(result.verified) + ". Source: " + links + ".</div>";
+      }
+      function renderCalc(id, result) {
+        var el = $(id);
+        if (!result.ok) {
+          el.innerHTML = '<p class="errors" style="margin:0">' + escapeHtml(result.error) + "</p>";
+          show(el, true);
+          return;
+        }
+        var cls = result.unknown ? "net unknown" : "net";
+        el.innerHTML =
+          "<div>Input: " + escapeHtml(result.input) + "</div>" +
+          '<div class="' + cls + '">Net: ' + escapeHtml(result.netLabel) + "</div>" +
+          "<div>Rate: " + escapeHtml(result.rate) + "</div>" +
+          sourceHtml(result);
+        show(el, true);
+      }
+      async function downloadZip(zip, filename) {
+        var blob = await zip.generateAsync({ type: "blob" });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(function () { URL.revokeObjectURL(url); }, 2000);
+      }
+
+      function renderSigned(ent) {
+        var box = $("signed-in");
+        if (!ent) { box.hidden = true; return; }
+        var email = ent.email || "email not recorded yet";
+        $("signed-label").textContent = "Signed in: " + email + " — " + MP.planLabel(ent.plan) + " plan (Stripe test mode)";
+        box.hidden = false;
+      }
+
+      function getChecklists() {
+        return store.get(MP.KEYS.checklists) || MP.emptyChecklistState();
+      }
+      function renderChecklists() {
+        var state = getChecklists();
+        var root = $("checklists");
+        root.innerHTML = "";
+        Object.keys(MP.CHECKLISTS).forEach(function (group) {
+          var spec = MP.CHECKLISTS[group];
+          var prog = MP.checklistProgress(state, group);
+          var card = document.createElement("div");
+          card.className = "card";
+          var head = document.createElement("div");
+          head.className = "section-head";
+          head.style.margin = "0 0 8px";
+          head.innerHTML = "<h3>" + escapeHtml(spec.title) + "</h3><span class=\"progress\">" + prog.checked + " of " + prog.total + "</span>";
+          card.appendChild(head);
+          spec.items.forEach(function (item) {
+            var row = document.createElement("label");
+            row.className = "check-item";
+            var cb = document.createElement("input");
+            cb.type = "checkbox";
+            cb.checked = !!(state[group] && state[group][item.id]);
+            cb.addEventListener("change", function () {
+              var s = getChecklists();
+              s[group] = s[group] || {};
+              s[group][item.id] = cb.checked;
+              store.set(MP.KEYS.checklists, s);
+              renderChecklists();
+            });
+            var span = document.createElement("span");
+            span.textContent = item.text;
+            row.appendChild(cb);
+            row.appendChild(span);
+            card.appendChild(row);
+          });
+          root.appendChild(card);
+        });
+      }
+
+      function getPassport() { return store.get(MP.KEYS.passport) || []; }
+      function renderPassport() {
+        var list = $("passport-list");
+        var records = getPassport();
+        list.innerHTML = "";
+        if (!records.length) {
+          list.innerHTML = "<p class=\"fine\">No designs recorded yet.</p>";
+          return;
+        }
+        records.forEach(function (r) {
+          var div = document.createElement("div");
+          div.className = "record";
+          var bits = [
+            r.owner ? "Owner: " + r.owner : null,
+            r.aiUse ? "AI use: " + r.aiUse : null,
+            r.licence ? "Licence: " + r.licence : null,
+            r.exclusivity ? "Exclusivity: " + r.exclusivity : null,
+            (r.listedOn && r.listedOn.length) ? "Listed: " + r.listedOn.join(", ") : null
+          ].filter(Boolean);
+          if (r.etsyFullPrice) bits.push("Etsy full price");
+          if (r.cfSubscription) bits.push("CF subscription library");
+          div.innerHTML = "<h3>" + escapeHtml(r.name || "Untitled") + "</h3><div class=\"meta\">" + escapeHtml(bits.join(" · ")) + "</div>";
+          if (MP.detectConflict(r)) {
+            var w = document.createElement("div");
+            w.className = "warning";
+            w.textContent = MP.conflictMessage(r);
+            div.appendChild(w);
+          }
+          var actions = document.createElement("div");
+          actions.className = "actions";
+          var edit = document.createElement("button");
+          edit.type = "button";
+          edit.className = "btn";
+          edit.textContent = "Edit";
+          edit.addEventListener("click", function () { fillPassportForm(r); });
+          var del = document.createElement("button");
+          del.type = "button";
+          del.className = "btn danger";
+          del.textContent = "Delete";
+          del.addEventListener("click", function () {
+            store.set(MP.KEYS.passport, getPassport().filter(function (x) { return x.id !== r.id; }));
+            renderPassport();
+          });
+          actions.appendChild(edit);
+          actions.appendChild(del);
+          div.appendChild(actions);
+          list.appendChild(div);
+        });
+      }
+      function fillPassportForm(r) {
+        $("passport-id").value = r.id;
+        $("p-name").value = r.name || "";
+        $("p-owner").value = r.owner || "";
+        $("p-ai").value = r.aiUse || "";
+        $("p-licence").value = r.licence || "";
+        $("p-excl").value = r.exclusivity || "";
+        $("p-listed").value = (r.listedOn || []).join(", ");
+        $("p-etsy").checked = !!r.etsyFullPrice;
+        $("p-cf").checked = !!r.cfSubscription;
+        $("passport-save").textContent = "Save changes";
+        $("passport-cancel").hidden = false;
+        updateConflictPreview();
+        $("p-name").focus();
+      }
+      function resetPassportForm() {
+        $("passport-form").reset();
+        $("passport-id").value = "";
+        $("passport-save").textContent = "Add record";
+        $("passport-cancel").hidden = true;
+        show($("passport-conflict"), false);
+      }
+      function updateConflictPreview() {
+        var draft = { name: $("p-name").value || "This design", etsyFullPrice: $("p-etsy").checked, cfSubscription: $("p-cf").checked };
+        var el = $("passport-conflict");
+        if (MP.detectConflict(draft)) {
+          el.textContent = MP.conflictMessage(draft);
+          show(el, true);
+        } else {
+          show(el, false);
+        }
+      }
+
+      function loadAi() {
+        var s = store.get(MP.KEYS.aiSettings) || MP.defaultAiSettings();
+        $("ai-canva").value = s.canvaOptOut || "undecided";
+        $("ai-adobe").checked = !!s.adobeRulesAcknowledged;
+        $("ai-etsy").checked = s.etsyDisclosureRuleOn !== false;
+      }
+      function saveAi() {
+        store.set(MP.KEYS.aiSettings, {
+          canvaOptOut: $("ai-canva").value,
+          adobeRulesAcknowledged: $("ai-adobe").checked,
+          etsyDisclosureRuleOn: $("ai-etsy").checked
+        });
+        $("ai-saved").textContent = "Saved in this browser.";
+      }
+
+      function renderApp(result) {
+        var ent = result && result.entitlement ? result.entitlement : store.get(MP.KEYS.entitlement);
+        if (result && result.error) {
+          var err = $("activate-error");
+          err.textContent = result.error;
+          show(err, true);
+        }
+        renderSigned(ent);
+        if (!ent) {
+          show($("gate"), true);
+          show($("email-prompt"), false);
+          show($("dashboard"), false);
+          return;
+        }
+        show($("gate"), false);
+        if (!ent.email) {
+          show($("email-prompt"), true);
+          show($("dashboard"), false);
+          return;
+        }
+        show($("email-prompt"), false);
+        show($("dashboard"), true);
+        renderChecklists();
+        renderPassport();
+        loadAi();
+      }
+
+      var activated = MP.activateFromSearch(window.location.search, new Date(), store.raw);
+      if (activated.shouldCleanUrl && window.history && window.history.replaceState) {
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+      renderApp(activated);
+
+      $("email-form").addEventListener("submit", function (e) {
+        e.preventDefault();
+        MP.setEntitlementEmail($("checkout-email").value, store.raw);
+        renderApp({ entitlement: store.get(MP.KEYS.entitlement) });
+      });
+      $("sign-out").addEventListener("click", function () {
+        MP.signOut(store.raw);
+        renderApp({ entitlement: null });
+      });
+
+      $("etsy-files").addEventListener("change", function () { fileList(this, "etsy-file-list"); });
+      $("cf-files").addEventListener("change", function () { fileList(this, "cf-file-list"); });
+
+      $("etsy-form").addEventListener("submit", async function (e) {
+        e.preventDefault();
+        show($("etsy-ok"), false);
+        var files = Array.prototype.slice.call($("etsy-files").files || []);
+        var result = await MP.buildEtsyPack(window.JSZip, files, new Date());
+        showErrors("etsy-errors", result.errors);
+        $("etsy-notes").textContent = (result.notes || []).join(" ");
+        if (!result.ok) return;
+        await downloadZip(result.zip, "motifpass-etsy-pack.zip");
+        $("etsy-ok").textContent = "Downloaded motifpass-etsy-pack.zip with " + result.entries.join(", ") + ".";
+        show($("etsy-ok"), true);
+      });
+      $("cf-form").addEventListener("submit", async function (e) {
+        e.preventDefault();
+        show($("cf-ok"), false);
+        var files = Array.prototype.slice.call($("cf-files").files || []);
+        var result = await MP.buildCfPack(window.JSZip, files, $("cf-sale").value, new Date());
+        showErrors("cf-errors", result.errors);
+        $("cf-notes").textContent = (result.notes || []).join(" ");
+        if (!result.ok) return;
+        await downloadZip(result.zip, "motifpass-creative-fabrica-pack.zip");
+        $("cf-ok").textContent = "Downloaded motifpass-creative-fabrica-pack.zip with " + result.entries.join(", ") + ".";
+        show($("cf-ok"), true);
+      });
+
+      $("calc-etsy").addEventListener("submit", function (e) {
+        e.preventDefault();
+        renderCalc("etsy-result", MP.calculateEtsy($("etsy-price").value, $("etsy-ads").value));
+      });
+      $("calc-cf").addEventListener("submit", function (e) {
+        e.preventDefault();
+        renderCalc("cf-result", MP.calculateCf($("cf-price").value, $("cf-mode").value));
+      });
+      $("cf-mode").addEventListener("change", function () {
+        $("cf-price").disabled = this.value === "subscription";
+      });
+      $("calc-adobe").addEventListener("submit", function (e) {
+        e.preventDefault();
+        renderCalc("adobe-result", MP.calculateAdobe($("adobe-plan").value));
+      });
+      $("calc-spoon").addEventListener("submit", function (e) {
+        e.preventDefault();
+        renderCalc("spoon-result", MP.calculateSpoonflower($("spoon-paid").value));
+      });
+      $("calc-canva").addEventListener("submit", function (e) {
+        e.preventDefault();
+        renderCalc("canva-result", MP.calculateCanva());
+      });
+
+      ["p-etsy", "p-cf", "p-name"].forEach(function (id) {
+        $(id).addEventListener("input", updateConflictPreview);
+        $(id).addEventListener("change", updateConflictPreview);
+      });
+      $("passport-form").addEventListener("submit", function (e) {
+        e.preventDefault();
+        var records = getPassport();
+        var id = $("passport-id").value || "rec_" + Date.now() + "_" + Math.random().toString(16).slice(2);
+        var record = {
+          id: id,
+          name: $("p-name").value.trim(),
+          owner: $("p-owner").value.trim(),
+          aiUse: $("p-ai").value.trim(),
+          licence: $("p-licence").value.trim(),
+          exclusivity: $("p-excl").value.trim(),
+          listedOn: $("p-listed").value.split(/[,;]/).map(function (s) { return s.trim(); }).filter(Boolean),
+          etsyFullPrice: $("p-etsy").checked,
+          cfSubscription: $("p-cf").checked,
+          updatedAt: new Date().toISOString()
+        };
+        var idx = records.findIndex(function (r) { return r.id === id; });
+        if (idx >= 0) records[idx] = record; else records.push(record);
+        store.set(MP.KEYS.passport, records);
+        resetPassportForm();
+        renderPassport();
+      });
+      $("passport-cancel").addEventListener("click", resetPassportForm);
+      $("passport-export").addEventListener("click", function () {
+        var csv = MP.passportToCsv(getPassport());
+        var blob = new Blob([csv], { type: "text/csv" });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement("a");
+        a.href = url;
+        a.download = "motifpass-design-passport.csv";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(function () { URL.revokeObjectURL(url); }, 2000);
+      });
+
+      ["ai-canva", "ai-adobe", "ai-etsy"].forEach(function (id) {
+        $(id).addEventListener("change", saveAi);
+      });
+    })();
+  </script>
+</body>
+</html>
